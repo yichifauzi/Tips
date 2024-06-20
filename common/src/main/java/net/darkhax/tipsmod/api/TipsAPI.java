@@ -41,7 +41,7 @@ public class TipsAPI {
 
     public static boolean canRenderOnScreen(Screen screen) {
 
-        return SCREENS.stream().filter(clazz -> clazz.isInstance(screen)).count() > 0;
+        return SCREENS.stream().anyMatch(clazz -> clazz.isInstance(screen));
     }
 
     public static ITip getRandomTip() {
