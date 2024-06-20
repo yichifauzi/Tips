@@ -74,24 +74,20 @@ public class TipsAPI {
     public static boolean canDisplayTip(ITip tip) {
 
         if (tip == null) {
-
             return false;
         }
 
         if (tip.getId() == null) {
-
             Constants.LOG.error("Found invalid tip without an ID. Object: {}, Class: {}", tip, tip.getClass());
             return false;
         }
 
         else if (tip.getTitle() == null) {
-
             Constants.LOG.error("Found invalid tip. Title is null. Object: {}, Class: {}, ID: {}", tip, tip.getClass(), tip.getId());
             return false;
         }
 
         else if (tip.getText() == null) {
-
             Constants.LOG.error("Found invalid tip. Text is null. Object: {}, Class: {}, ID: {}", tip, tip.getClass(), tip.getId());
             return false;
         }
@@ -99,26 +95,15 @@ public class TipsAPI {
         final ResourceLocation id = tip.getId();
 
         if (TipsModCommon.CONFIG.ignoredNamespaces.contains(id.getNamespace())) {
-
             return false;
         }
 
         if (TipsModCommon.CONFIG.ignoredTips.contains(id.toString())) {
-
             return false;
         }
 
-        final ComponentContents contents = tip.getText().getContents();
-
-        if (contents instanceof TranslatableContents) {
-
-            final String key = ((TranslatableContents) contents).getKey();
-
-            // Ignore tips that don't have a localization in the current language.
-            if (!I18n.exists(key)) {
-
-                return false;
-            }
+        if (TipsModCommon.CONFIG.hideUnlocalizedTips && tip.getText().getContents() instanceof TranslatableContents translatable && !I18n.exists(translatable.getKey())) {
+            return false;
         }
 
         return true;
