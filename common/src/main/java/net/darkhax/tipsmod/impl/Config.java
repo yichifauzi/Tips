@@ -27,6 +27,9 @@ public class Config {
     @Expose
     public boolean hideUnlocalizedTips = false;
 
+    @Expose
+    public float tipRenderWidthPercent = 0.35f;
+
     public static Config load() {
 
         File configFile = Services.PLATFORM.getConfigPath().resolve("tips.json").toFile();

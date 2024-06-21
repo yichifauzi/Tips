@@ -3,6 +3,7 @@ package net.darkhax.tipsmod.impl.client;
 import net.darkhax.bookshelf.api.util.RenderHelper;
 import net.darkhax.tipsmod.api.TipsAPI;
 import net.darkhax.tipsmod.api.resources.ITip;
+import net.darkhax.tipsmod.impl.TipsModCommon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
@@ -50,7 +51,7 @@ public class TipRenderHandler {
 
             // Render the tip.
             if (tip != null && tip.canDisplayOnScreen(parentScreen)) {
-                final int textWidth = Mth.floor(parentScreen.width * 0.35f);
+                final int textWidth = Mth.floor(parentScreen.width * TipsModCommon.CONFIG.tipRenderWidthPercent);
                 int height = parentScreen.height - 10;
                 height -= RenderHelper.renderLinesReversed(graphics, 10, height, tip.getText(), textWidth);
                 height -= 3; // padding for title
