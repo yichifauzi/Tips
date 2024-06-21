@@ -9,6 +9,8 @@ import net.darkhax.tipsmod.api.TipsAPI;
 import net.darkhax.tipsmod.api.resources.ITip;
 import net.darkhax.tipsmod.api.resources.ITipSerializer;
 import net.darkhax.tipsmod.impl.Constants;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -22,7 +24,7 @@ import java.util.Map;
 
 public class TipManager extends SimpleJsonResourceReloadListener {
 
-    private final Map<ResourceLocation, ITip> loadedTips = new HashMap();
+    private final Map<ResourceLocation, ITip> loadedTips = new HashMap<>();
     private final List<ITip> randomAccess = new ArrayList<>();
     private final List<ITip> immutableAccess = Collections.unmodifiableList(randomAccess);
 
