@@ -136,7 +136,7 @@ public class SimpleTip implements ITip {
         @Override
         public SimpleTip fromJSON(ResourceLocation id, JsonObject json) {
 
-            final Component title = Serializers.TEXT.fromJSON(json, "title", TipsAPI.DEFAULT_TITLE);
+            final Component title = Serializers.TEXT.fromJSON(json, "title", TipsModCommon.CONFIG.defaultTitle);
             final Component text = Serializers.TEXT.fromJSON(json, "tip");
             final Optional<Integer> cycleTime = Serializers.INT.fromJSONOptional(json, "cycleTime");
 
