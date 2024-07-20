@@ -59,6 +59,12 @@ public class SimpleTip implements ITip {
     private final ConditionRules<Holder<DimensionType>> dimension;
     private final ConditionRules<Set<ResourceLocation>> advancements;
 
+    private final boolean hasScreenConditions;
+    private final boolean hasBiomeConditions;
+    private final boolean hasDimensionConditions;
+    private final boolean hasAdvancementConditions;
+    private final boolean requiresPlayerContext;
+
     public SimpleTip(ResourceLocation id, Component title, Component text, Optional<Integer> cycleTime) {
         this(id, title, text, cycleTime, null, null, null, null);
     }
@@ -73,6 +79,12 @@ public class SimpleTip implements ITip {
         this.biome = biomes;
         this.dimension = dimension;
         this.advancements = advancements;
+
+        this.hasScreenConditions = this.screens != null && !this.screens.isEmpty();
+        this.hasBiomeConditions = this.biome != null && !this.biome.isEmpty();
+        this.hasDimensionConditions = this.dimension != null && !this.dimension.isEmpty();
+        this.hasAdvancementConditions = this.advancements != null && !this.advancements.isEmpty();
+        this.requiresPlayerContext = this.hasBiomeConditions || this.hasDimensionConditions || this.hasAdvancementConditions;
     }
 
     @Override
@@ -102,26 +114,29 @@ public class SimpleTip implements ITip {
     @Override
     public boolean canDisplayOnScreen(Screen screen) {
 
-        if ((this.screens != null && !this.screens.isEmpty()) ? this.screens.test(screen) : TipsAPI.canRenderOnScreen(screen)) {
+        if (this.hasScreenConditions ? this.screens.test(screen) : TipsAPI.canRenderOnScreen(screen)) {
 
-            final LocalPlayer player = Minecraft.getInstance().player;
+            if (this.requiresPlayerContext) {
 
-            if (player == null) {
-                return false;
-            }
+                final LocalPlayer player = Minecraft.getInstance().player;
 
-            if (this.biome != null && !this.biome.isEmpty() && !this.biome.test(player.level().getBiome(player.blockPosition()))) {
-                return false;
-            }
-
-            if (this.dimension != null && !this.dimension.isEmpty() && !this.dimension.test(player.level().dimensionTypeRegistration())) {
-                return false;
-            }
-
-            if (this.advancements != null && !this.advancements.isEmpty()) {
-                final CachedSupplier<Set<ResourceLocation>> completedAdvancements = CachedSupplier.cache(() -> ClientServices.CLIENT.getCompletedAdvancements(player).stream().map(Advancement::getId).collect(Collectors.toSet()));
-                if (!this.advancements.test(completedAdvancements.get())) {
+                if (player == null) {
                     return false;
+                }
+
+                if (this.hasBiomeConditions && !this.biome.test(player.level().getBiome(player.blockPosition()))) {
+                    return false;
+                }
+
+                if (this.hasDimensionConditions && !this.dimension.test(player.level().dimensionTypeRegistration())) {
+                    return false;
+                }
+
+                if (this.hasAdvancementConditions) {
+                    final CachedSupplier<Set<ResourceLocation>> completedAdvancements = CachedSupplier.cache(() -> ClientServices.CLIENT.getCompletedAdvancements(player).stream().map(Advancement::getId).collect(Collectors.toSet()));
+                    if (!this.advancements.test(completedAdvancements.get())) {
+                        return false;
+                    }
                 }
             }
 
